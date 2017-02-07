@@ -9,7 +9,13 @@ public class Bank implements BankInterface {
 	
 	private static ArrayList<Account> accounts; // users accounts
         
-    public Bank() {}
+    public Bank() {
+    	
+    	accounts = new ArrayList<Account>();
+		accounts.add(new Account(1, "James", "123", 100));
+	    accounts.add(new Account(2, "Sean", "321", 10));
+	    accounts.add(new Account(3, "Shrek", "123", 400));
+    }
         
     public static void main(String args[]) {
         
@@ -20,11 +26,6 @@ public class Bank implements BankInterface {
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry();
             registry.bind("Hello", stub);
-            
-            accounts.add(new Account(1, "James", "123", 100));
-            accounts.add(new Account(2, "Sean", "321", 10));
-            accounts.add(new Account(3, "Shrek", "123", 400));
-
             System.err.println("Server ready");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
@@ -44,8 +45,8 @@ public class Bank implements BankInterface {
 
 	@Override
 	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		int i = getAccountIndex(accountnum);
+		accounts.get(i).setBalance(accounts.get(i).getBalance()+ amount);
 	}
 
 	@Override
@@ -56,7 +57,19 @@ public class Bank implements BankInterface {
 
 	@Override
 	public int inquiry(int accountnum, long sessionID) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		int i = getAccountIndex(accountnum);
+		return  accounts.get(i).getBalance();
+	}
+	
+	private int getAccountIndex(int accountnum){
+		
+		int index = 0;
+		
+		for (int i=0; i<accounts.size() ; i++){
+			if (accounts.get(i).accountNumber == accountnum){
+				index = i;
+			}
+		}
+		return index;
 	}
 }

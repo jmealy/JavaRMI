@@ -15,7 +15,11 @@ public class ATM {
             System.out.println("response: " + response);
             
             long sessionID = stub.login("James", "123");
-            
+            int bal = stub.inquiry(1, 0);
+            System.out.println("balance: " + bal);
+            stub.deposit(1, 20, 0);
+            System.out.println("deposited 20");
+            System.out.println("newbal:" + stub.inquiry(1, 0));
             
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());

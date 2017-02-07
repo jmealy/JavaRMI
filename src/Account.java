@@ -4,20 +4,20 @@ public class Account {
 	public int accountNumber;
 	private String username;
 	private String password;
-	private long balance;
+	private int balance;
 	
-	public Account(int num, String uname, String pass, long bal){
+	public Account(int num, String uname, String pass, int bal){
 		accountNumber = num;
 		username = uname;
 		password = pass;
 		balance = bal;
 	}
 	
-	public long getBalance(){
+	public int getBalance(){
 		return this.balance;
 	}
 	
-	public void setBalance(long bal){
+	public void setBalance(int bal){
 		this.balance = bal;
 	}
 }
