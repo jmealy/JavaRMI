@@ -1,5 +1,6 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Date;
 
 public interface BankInterface extends Remote {
@@ -13,6 +14,6 @@ public interface BankInterface extends Remote {
 	
 	public int inquiry(int accountnum, long sessionID) throws RemoteException;
 	
-	//public Statement getStatement(Date from, Date to, long sessionID) throws RemoteException;
+	public ArrayList<Transaction> getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException;
 	
 }

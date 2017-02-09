@@ -1,14 +1,17 @@
-    
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set; 
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
         
 public class Bank implements BankInterface {
 	
 	private static ArrayList<Account> accounts; // users accounts
-        
     public Bank() {
     	
     	accounts = new ArrayList<Account>();
@@ -46,12 +49,28 @@ public class Bank implements BankInterface {
 	@Override
 	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException {
 		int i = getAccountIndex(accountnum);
-		accounts.get(i).setBalance(accounts.get(i).getBalance()+ amount);
+		Account ac = accounts.get(i);
+		int nBal = ac.getBalance() + amount;
+		Date d = new Date();
+		ac.setBalance(nBal);
+		Transaction tra = new Transaction("Deposit",d,ac.getBalance());
+		ac.addTranaction(tra);
+		nBal = 0;
 	}
 
 	@Override
 	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException {
-		// TODO Auto-generated method stub
+		int i = getAccountIndex(accountnum);
+		int nBal = 0;
+		Account ac = accounts.get(i);
+		if(accounts.get(i).getBalance() < amount){
+			System.out.println("Insufficent Funds");
+		}
+		else{
+			nBal = ac.getBalance() - amount;
+			ac.setBalance(nBal);
+			ac.addTranaction(new Transaction("Withdraw",new Date(), ac.getBalance()));
+		}
 		
 	}
 
@@ -59,6 +78,23 @@ public class Bank implements BankInterface {
 	public int inquiry(int accountnum, long sessionID) throws RemoteException {
 		int i = getAccountIndex(accountnum);
 		return  accounts.get(i).getBalance();
+	}
+	@Override
+	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID){
+		int i = getAccountIndex(accountnum);
+		ArrayList<Transaction> validTransactions = new ArrayList<Transaction>();
+		Account ac = accounts.get(i);
+		validTransactions = ac.getTransactions();
+		
+		for(int a = 0 ; a < validTransactions.size(); a++){
+			if(validTransactions.get(a).getDate().before(from) || validTransactions.get(a).getDate().after(to)){
+				validTransactions.remove(a);
+			}
+		}
+		
+		return validTransactions;
+		
+		
 	}
 	
 	private int getAccountIndex(int accountnum){
