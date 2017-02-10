@@ -12,9 +12,13 @@ import java.util.Date;
 public class Bank implements BankInterface {
 	
 	private static ArrayList<Account> accounts; // users accounts
+	private static ArrayList<Long> sessions; // users accounts
+	private static long currid;
+	
     public Bank() {
-    	
+    	sessions = new ArrayList<Long>();
     	accounts = new ArrayList<Account>();
+    	currid = 0;
 		accounts.add(new Account(1, "James", "123", 100));
 	    accounts.add(new Account(2, "Sean", "321", 10));
 	    accounts.add(new Account(3, "Shrek", "123", 400));
@@ -44,11 +48,32 @@ public class Bank implements BankInterface {
 	public long login(String username, String password) throws RemoteException {
 		int i = 0;//getAccountIndex(username);
 		if (accounts.get(i).checkPassword(password)){
-			return 5;//getSessionID();
+			return getSessionID();
 			
 		}else{
 			throw new InvalidLogin("Wrong Password: " + password);
 		}
+	}
+
+	private long getSessionID() {
+		currid ++;
+		long id = currid;
+		sessions.add(id);
+//		new java.util.Timer().schedule( 
+//    	        new java.util.TimerTask() {
+//    	            @Override
+//    	            public void run() {
+//    	                // your code here
+//    	            	//System.out.println("timer up");
+//    	            	sessions.remove(sessions.indexOf(id));
+//    	            	cancel();
+//    	            }
+//    	        }, 
+//    	        10000 
+//    	);
+//		
+		
+		return id;
 	}
 
 	@Override
