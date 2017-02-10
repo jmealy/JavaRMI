@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set; 
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -77,27 +74,27 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+	public void deposit(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
 		int i = getAccountIndex(accountnum);
 		Account ac = accounts.get(i);
-		int nBal = ac.getBalance() + amount;
+		float nBal = ac.getBalance() + amount;
 		Date d = new Date();
 		ac.setBalance(nBal);
-		Transaction tra = new Transaction("Deposit",d,ac.getBalance());
+		Transaction tra = new Transaction("Deposit",d,amount,ac.getBalance());
 		ac.addTranaction(tra);
 		nBal = 0;
 	}
 
 	@Override
-	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+	public void withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
 		int i = getAccountIndex(accountnum);
-		int nBal = 0;
+		float nBal = 0;
 		Account ac = accounts.get(i);
 		if(accounts.get(i).getBalance() < amount){
 			System.out.println("Insufficent Funds");
@@ -105,13 +102,13 @@ public class Bank implements BankInterface {
 		else{
 			nBal = ac.getBalance() - amount;
 			ac.setBalance(nBal);
-			ac.addTranaction(new Transaction("Withdraw",new Date(), ac.getBalance()));
+			ac.addTranaction(new Transaction("Withdraw",new Date(), amount ,ac.getBalance()));
 		}
 		
 	}
 
 	@Override
-	public int inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+	public float inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession {
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}

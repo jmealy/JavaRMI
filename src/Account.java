@@ -5,21 +5,21 @@ public class Account {
 	public int accountNumber;
 	public String username;
 	private String password;
-	private int balance;
+	private float balance;
 	private ArrayList<Transaction> Transactions = new ArrayList<Transaction>();
 	
-	public Account(int num, String uname, String pass, int bal){
+	public Account(int num, String uname, String pass, float bal){
 		accountNumber = num;
 		username = uname;
 		password = pass;
 		balance = bal;
 	}
 	
-	public int getBalance(){
+	public float getBalance(){
 		return this.balance;
 	}
 	
-	public void setBalance(int bal){
+	public void setBalance(float bal){
 		this.balance = bal;
 	}
 	
