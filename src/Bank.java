@@ -53,7 +53,7 @@ public class Bank implements BankInterface {
 		int nBal = ac.getBalance() + amount;
 		Date d = new Date();
 		ac.setBalance(nBal);
-		Transaction tra = new Transaction("Deposit",d,amount,ac.getBalance());
+		Transaction tra = new Transaction("Deposit",d,ac.getBalance());
 		ac.addTranaction(tra);
 		nBal = 0;
 	}
@@ -69,7 +69,7 @@ public class Bank implements BankInterface {
 		else{
 			nBal = ac.getBalance() - amount;
 			ac.setBalance(nBal);
-			ac.addTranaction(new Transaction("Withdraw",new Date(),amount, ac.getBalance()));
+			ac.addTranaction(new Transaction("Withdraw",new Date(), ac.getBalance()));
 		}
 		
 	}
