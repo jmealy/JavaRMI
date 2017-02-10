@@ -1,3 +1,5 @@
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -41,10 +43,19 @@ public class ATM {
 //            }
             
             
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
-        }
+        } catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidSession e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidLogin e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 }

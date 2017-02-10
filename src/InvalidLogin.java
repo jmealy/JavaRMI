@@ -1,5 +1,5 @@
 
-public class InvalidLogin extends RuntimeException {
+public class InvalidLogin extends Exception {
 	
 	/**
 	 * 

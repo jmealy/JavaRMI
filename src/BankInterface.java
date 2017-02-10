@@ -6,7 +6,7 @@ import java.util.Date;
 public interface BankInterface extends Remote {
     String sayHello() throws RemoteException;
     
-	public long login(String username, String password) throws RemoteException;//, InvalidLogin;
+	public long login(String username, String password) throws RemoteException, InvalidLogin;//, InvalidLogin;
 	
 	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession; //, InvalidSession;
 	
