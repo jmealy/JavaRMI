@@ -18,22 +18,27 @@ public class ATM {
             System.out.println("response: " + response);
 
             long sessionID = stub.login("James", "123");
-            System.out.println("sessionID: " + sessionID);
-            int bal = stub.inquiry(1, 0);
-            System.out.println("balance: " + bal);
-            stub.deposit(1, 20, 0);
-            System.out.println("deposited 20");
-            System.out.println("newbal:" + stub.inquiry(1, 0));
-            stub.withdraw(1, 20, 0);
-            ArrayList<Transaction> Statement = new ArrayList<Transaction>();
-            Date fDate = new Date();
-            fDate.setHours(fDate.getHours()-1);
-            System.out.println(fDate.getHours()-1);
-            Statement = stub.getStatement(1, fDate, new Date(), sessionID);
-            for(int i = 0 ; i < Statement.size(); i++){
-            	Transaction t = Statement.get(i);
-            	System.out.println("Action: "+ t.getAction()+ " Date: "+t.getDate().toString()+ " Amount: "+ t.getBalence());
-            }
+            System.out.println("bal: " +stub.inquiry(1, 1));
+            
+            
+            
+            
+//            System.out.println("sessionID: " + sessionID);
+//            int bal = stub.inquiry(1, 0);
+//            System.out.println("balance: " + bal);
+//            stub.deposit(1, 20, 0);
+//            System.out.println("deposited 20");
+//            System.out.println("newbal:" + stub.inquiry(1, 0));
+//            stub.withdraw(1, 20, 0);
+//            ArrayList<Transaction> Statement = new ArrayList<Transaction>();
+//            Date fDate = new Date();
+//            fDate.setHours(fDate.getHours()-1);
+//            System.out.println(fDate.getHours()-1);
+//            Statement = stub.getStatement(1, fDate, new Date(), sessionID);
+//            for(int i = 0 ; i < Statement.size(); i++){
+//            	Transaction t = Statement.get(i);
+//            	System.out.println("Action: "+ t.getAction()+ " Date: "+t.getDate().toString()+ " Amount: "+ t.getBalence());
+//            }
             
             
         } catch (Exception e) {

@@ -59,25 +59,29 @@ public class Bank implements BankInterface {
 		currid ++;
 		long id = currid;
 		sessions.add(id);
-//		new java.util.Timer().schedule( 
-//    	        new java.util.TimerTask() {
-//    	            @Override
-//    	            public void run() {
-//    	                // your code here
-//    	            	//System.out.println("timer up");
-//    	            	sessions.remove(sessions.indexOf(id));
-//    	            	cancel();
-//    	            }
-//    	        }, 
-//    	        10000 
-//    	);
-//		
+		new java.util.Timer().schedule( 
+    	        new java.util.TimerTask() {
+    	            @Override
+    	            public void run() {
+    	                // your code here
+    	            	//System.out.println("timer up");
+    	            	System.out.println("removing sessionID:" + id);
+    	            	sessions.remove(sessions.indexOf(id));
+    	            	cancel();
+    	            }
+    	        }, 
+    	        10*1000 
+    	);
+		
 		
 		return id;
 	}
 
 	@Override
-	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException {
+	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		Account ac = accounts.get(i);
 		int nBal = ac.getBalance() + amount;
@@ -89,7 +93,7 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException {
+	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
 		int i = getAccountIndex(accountnum);
 		int nBal = 0;
 		Account ac = accounts.get(i);
@@ -105,7 +109,10 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public int inquiry(int accountnum, long sessionID) throws RemoteException {
+	public int inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		return  accounts.get(i).getBalance();
 	}
