@@ -12,9 +12,13 @@ import java.util.Date;
 public class Bank implements BankInterface {
 	
 	private static ArrayList<Account> accounts; // users accounts
+	private static ArrayList<Long> sessions; // users accounts
+	private static long currid;
+	
     public Bank() {
-    	
+    	sessions = new ArrayList<Long>();
     	accounts = new ArrayList<Account>();
+    	currid = 0;
 		accounts.add(new Account(1, "James", "123", 100));
 	    accounts.add(new Account(2, "Sean", "321", 10));
 	    accounts.add(new Account(3, "Shrek", "123", 400));
@@ -41,13 +45,42 @@ public class Bank implements BankInterface {
     }
 
 	@Override
-	public long login(String username, String password) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+	public long login(String username, String password) throws RemoteException, InvalidLogin {
+		int i = 0;//getAccountIndex(username);
+		if (accounts.get(i).checkPassword(password)){
+			return getSessionID();
+		}else{
+			throw new InvalidLogin("Wrong Password: " + password);
+		}
+	}
+
+	private long getSessionID() {
+		currid ++;
+		long id = currid;
+		sessions.add(id);
+		new java.util.Timer().schedule( 
+    	        new java.util.TimerTask() {
+    	            @Override
+    	            public void run() {
+    	                // your code here
+    	            	//System.out.println("timer up");
+    	            	System.out.println("removing sessionID:" + id);
+    	            	sessions.remove(sessions.indexOf(id));
+    	            	cancel();
+    	            }
+    	        }, 
+    	        10*1000 
+    	);
+		
+		
+		return id;
 	}
 
 	@Override
-	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException {
+	public void deposit(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		Account ac = accounts.get(i);
 		int nBal = ac.getBalance() + amount;
@@ -59,7 +92,10 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException {
+	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		int nBal = 0;
 		Account ac = accounts.get(i);
@@ -75,12 +111,18 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public int inquiry(int accountnum, long sessionID) throws RemoteException {
+	public int inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		return  accounts.get(i).getBalance();
 	}
 	@Override
-	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID){
+	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID) throws InvalidSession{
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		ArrayList<Transaction> validTransactions = new ArrayList<Transaction>();
 		Account ac = accounts.get(i);
