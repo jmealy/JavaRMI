@@ -9,12 +9,14 @@ public class Transaction implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String action;
 	private Date date;
-	private int balence; 
+	private int balence;
+	private int amount;
 	
-	public Transaction(String ac, Date d, int bal){
+	public Transaction(String ac, Date d,int amt, int bal){
 		action = ac;
 		date = d;
 		balence = bal;
+		amount = amt;
 	}
 	
 	public String getAction(){
@@ -25,5 +27,8 @@ public class Transaction implements Serializable {
 	}
 	public int getBalence(){
 		return this.balence;
+	}
+	public int getAmount(){
+		return this.amount;
 	}
 }
