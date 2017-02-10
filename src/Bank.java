@@ -42,8 +42,13 @@ public class Bank implements BankInterface {
 
 	@Override
 	public long login(String username, String password) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		int i = 0;//getAccountIndex(username);
+		if (accounts.get(i).checkPassword(password)){
+			return 5;//getSessionID();
+			
+		}else{
+			throw new InvalidLogin("Wrong Password: " + password);
+		}
 	}
 
 	@Override

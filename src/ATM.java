@@ -16,8 +16,9 @@ public class ATM {
             BankInterface stub = (BankInterface) registry.lookup("Hello");
             String response = stub.sayHello();
             System.out.println("response: " + response);
-            
+
             long sessionID = stub.login("James", "123");
+            System.out.println("sessionID: " + sessionID);
             int bal = stub.inquiry(1, 0);
             System.out.println("balance: " + bal);
             stub.deposit(1, 20, 0);
@@ -39,5 +40,6 @@ public class ATM {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
+
     }
 }

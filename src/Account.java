@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Account {
 	
 	public int accountNumber;
-	private String username;
+	public String username;
 	private String password;
 	private int balance;
 	private ArrayList<Transaction> Transactions = new ArrayList<Transaction>();
@@ -28,5 +28,12 @@ public class Account {
 	}
 	public ArrayList<Transaction> getTransactions(){
 		return this.Transactions;
+	}
+	
+	public boolean checkPassword(String password){
+		if (this.password.equals(password)){
+			return true;
+		}
+		return false;
 	}
 }
