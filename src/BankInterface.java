@@ -14,6 +14,6 @@ public interface BankInterface extends Remote {
 	
 	public int inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession;
 	
-	public ArrayList<Transaction> getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException;
+	public ArrayList<Transaction> getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidSession;
 	
 }

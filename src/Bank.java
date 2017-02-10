@@ -93,6 +93,9 @@ public class Bank implements BankInterface {
 
 	@Override
 	public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException, InvalidSession {
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		int nBal = 0;
 		Account ac = accounts.get(i);
@@ -116,7 +119,10 @@ public class Bank implements BankInterface {
 		return  accounts.get(i).getBalance();
 	}
 	@Override
-	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID){
+	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID) throws InvalidSession{
+		if (!sessions.contains(sessionID)){
+			throw new InvalidSession("Session has timed out");
+		}
 		int i = getAccountIndex(accountnum);
 		ArrayList<Transaction> validTransactions = new ArrayList<Transaction>();
 		Account ac = accounts.get(i);
