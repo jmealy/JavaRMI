@@ -2,6 +2,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -10,7 +13,6 @@ public class ATM {
 
     private ATM() {}
 
-    @SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
         String host = (args.length < 1) ? null : args[0];
@@ -23,6 +25,7 @@ public class ATM {
             boolean login = false;
             Scanner scanner = new Scanner(System.in);
             System.out.println("Welcom to ATM");
+      
             long sessionID = -1;
             while(!login){
             	System.out.print("Plese enter Username: ");
@@ -37,6 +40,7 @@ public class ATM {
             	}
             	else{
             		System.out.println("Login Sucsessful!!");
+            		System.out.println("Enter help to view commands");
             		login = true;
             	}
             }
@@ -54,25 +58,68 @@ public class ATM {
             	
             	case"inquiry":
             		System.out.println("Current balence: "+stub.inquiry(1, 0));
+            		line = null;
             		break;
             	
             	case"withdraw":
             		System.out.print("Plese enter an amount to withdraw: ");
             		int am = scanner.nextInt();
-            		stub.withdraw(1, am, sessionID);
+            		boolean check = stub.withdraw(1, am, sessionID);
+            		
+            		if(!check){
+            		System.out.println("Withdrew: "+am);
+            		}
+            		else{
+            			System.out.println("Insufficent Funds!!!");
+            		}
+            		line = null;
             		break;
             	
             	case"deposit":
             		System.out.print("Plese enter an amount to deposit: ");
             		int amt = scanner.nextInt();
             		stub.deposit(1, amt, sessionID);
+            		System.out.println("Deposited: "+amt);
+            		line = null;
             		break;
             		
             	case"statement":
             		ArrayList<Transaction> Statement = new ArrayList<Transaction>();
-                    Date fDate = new Date();
-                    fDate.setHours(fDate.getHours()-1);
-                    Statement = stub.getStatement(1, fDate, new Date(), sessionID);
+            		DateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
+            		System.out.println("Plese enter date in dd/MMM/yyy format . Leave dates blank to get all transactions");
+            		System.out.println("From Date: ");
+            		Date tDate = null;
+            		Date fDate = null;
+            		String date = null;
+            		date = scanner.nextLine();
+            		if(!date.isEmpty()){
+            			try{
+            			fDate = df.parse(date);
+            			System.out.println(fDate);
+            			}
+            			catch(ParseException e ){
+            				e.printStackTrace();
+            			}
+            		}
+            		System.out.println("To Date: ");
+            		date = null;
+            		date = scanner.nextLine();
+            		if(!date.isEmpty()){
+            			try{
+                			tDate = df.parse(date);
+                			System.out.println(tDate);
+                			}
+                			catch(ParseException e ){
+                				e.printStackTrace();
+                			}
+            		}
+            		
+            		if(!date.isEmpty()){
+                    Statement = stub.getStatement(1, fDate, tDate, sessionID);
+            		}
+            		else{
+            			Statement = stub.getStatement(1,null,null, sessionID);
+            		}
                     if(!Statement.isEmpty()){
                     	for(int i = 0 ; i < Statement.size(); i++){
                     		Transaction t = Statement.get(i);
@@ -81,17 +128,23 @@ public class ATM {
                     }else{
                     	System.out.println("No previous transactions");
                     }
+                    line = null;
             		break;
             
-            	case "exit":
+            	case "logout":
             		System.out.println("Goodbye");
             		CLIActive = false;
             		scanner.close();
             		break;
-            	default:
-            		if(line != ""){
-            		System.out.println("Command not found");
-            		}
+       
+            	case"help":
+            		System.out.println("Available commands:");
+            		System.out.println("deposit- To deposit money into your account");
+            		System.out.println("withdraw- Take money out your account");
+            		System.out.println("inquiry - To view balence from given dates");
+            		System.out.println("statement- To view a list of prevous transactions on the account");
+            		System.out.println("logout - To logout of ATM");
+            		System.out.println("help - To view all availble commands");
             		break;
             	}
             }

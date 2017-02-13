@@ -66,7 +66,7 @@ public class Bank implements BankInterface {
     	            	cancel();
     	            }
     	        }, 
-    	        10*1000 
+    	        180*1000 
     	);
 		
 		
@@ -89,7 +89,8 @@ public class Bank implements BankInterface {
 	}
 
 	@Override
-	public void withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
+	public boolean withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
+		boolean notEnough = false;
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
@@ -97,13 +98,15 @@ public class Bank implements BankInterface {
 		float nBal = 0;
 		Account ac = accounts.get(i);
 		if(accounts.get(i).getBalance() < amount){
-			System.out.println("Insufficent Funds");
+			notEnough = true;
 		}
 		else{
 			nBal = ac.getBalance() - amount;
 			ac.setBalance(nBal);
 			ac.addTranaction(new Transaction("Withdraw",new Date(), amount ,ac.getBalance()));
 		}
+		
+		return notEnough;
 		
 	}
 
@@ -124,10 +127,11 @@ public class Bank implements BankInterface {
 		ArrayList<Transaction> validTransactions = new ArrayList<Transaction>();
 		Account ac = accounts.get(i);
 		validTransactions = ac.getTransactions();
-		
-		for(int a = 0 ; a < validTransactions.size(); a++){
-			if(validTransactions.get(a).getDate().before(from) || validTransactions.get(a).getDate().after(to)){
+		if(from != null && to != null){
+			for(int a = 0 ; a < validTransactions.size(); a++){
+				if(validTransactions.get(a).getDate().before(from) || validTransactions.get(a).getDate().after(to)){
 				validTransactions.remove(a);
+				}
 			}
 		}
 		

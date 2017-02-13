@@ -10,7 +10,7 @@ public interface BankInterface extends Remote {
 	
 	public void deposit(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession; //, InvalidSession;
 	
-	public void withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession;
+	public boolean withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession;
 	
 	public float inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession;
 	

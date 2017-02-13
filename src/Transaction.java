@@ -16,7 +16,7 @@ public class Transaction implements Serializable {
 		action = ac;
 		date = d;
 		balence = bal;
-		amount = bal;
+		amount = am;
 	}
 	
 	public String getAction(){
