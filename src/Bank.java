@@ -9,18 +9,19 @@ import java.util.Date;
 public class Bank implements BankInterface {
 	
 	private static ArrayList<Account> accounts; // users accounts
-	private static ArrayList<Long> sessions; // users accounts
-	private static long currid;
+	private static ArrayList<Integer> sessions; // users accounts
+	private static int currid;
 	
     public Bank() {
-    	sessions = new ArrayList<Long>();
-    	accounts = new ArrayList<Account>();
+    	sessions = new ArrayList<Integer>();	// list of active session IDs
+    	accounts = new ArrayList<Account>();	// list of accounts in system
     	currid = 0;
+    	// add dummy accounts for testing
 		accounts.add(new Account(1, "James", "123", 100));
 	    accounts.add(new Account(2, "Sean", "321", 10));
 	    accounts.add(new Account(3, "Shrek", "123", 400));
     }
-        
+       
     public static void main(String args[]) {
         
         try {
@@ -36,45 +37,52 @@ public class Bank implements BankInterface {
             e.printStackTrace();
         }
     }
-    
-    public String sayHello() {
-        return "Hello !";
-    }
 
+    /*********
+     * @Params:  username and password.
+     * It checks to see if username and password are valid
+     * It returns an array of length 2 containing the sessionID and account number of client
+     *********/
 	@Override
-	public long login(String username, String password) throws RemoteException, InvalidLogin {
-		int i = 0;//getAccountIndex(username);
+	public int[] login(String username, String password) throws RemoteException, InvalidLogin {
+		int i = getAccountIndex(username);
+		System.out.println("Account num:" + i);
 		if (accounts.get(i).checkPassword(password)){
-			return getSessionID();
+			return new int[]{getSessionID(), accounts.get(i).accountNumber};
 		}else{
 			throw new InvalidLogin("Wrong Password: " + password);
 		}
 	}
 
-	private long getSessionID() {
+    /*********
+     * A method to generate a unique sessionID and start a session timer
+     * Remove the sessionID from the list of valid sessions when timer runs out
+     *********/
+	private int getSessionID() {
 		currid ++;
-		long id = currid;
+		int id = currid;
 		sessions.add(id);
 		new java.util.Timer().schedule( 
     	        new java.util.TimerTask() {
     	            @Override
     	            public void run() {
-    	                // your code here
-    	            	//System.out.println("timer up");
+    	            	// this code is executed when timer runs out.
     	            	System.out.println("removing sessionID:" + id);
     	            	sessions.remove(sessions.indexOf(id));
     	            	cancel();
     	            }
     	        }, 
     	        180*1000 
-    	);
-		
-		
+    	);	
 		return id;
 	}
 
+    /*********
+     * Takes an amount as a p of money as a parameter, and adds it to the user's balance
+     *********/
 	@Override
-	public void deposit(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
+	public void deposit(int accountnum, float amount, int sessionID) throws RemoteException, InvalidSession {
+		// check if the session is still valid
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
@@ -88,9 +96,13 @@ public class Bank implements BankInterface {
 		nBal = 0;
 	}
 
+    /*********
+     * removes the specified amount from the users balance.
+     *********/
 	@Override
-	public boolean withdraw(int accountnum, float amount, long sessionID) throws RemoteException, InvalidSession {
+	public boolean withdraw(int accountnum, float amount, int sessionID) throws RemoteException, InvalidSession {
 		boolean notEnough = false;
+		// check if the session is still valid
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
@@ -110,16 +122,25 @@ public class Bank implements BankInterface {
 		
 	}
 
+    /*********
+     * returns the users current balance
+     *********/
 	@Override
-	public float inquiry(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+	public float inquiry(int accountnum, int sessionID) throws RemoteException, InvalidSession {
+		// check if the session is still valid
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
 		int i = getAccountIndex(accountnum);
 		return  accounts.get(i).getBalance();
 	}
+	
+    /*********
+     * returns a Statement object to the user for the specified dates
+     *********/
 	@Override
-	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, long sessionID) throws InvalidSession{
+	public ArrayList<Transaction> getStatement(int accountnum,Date from, Date to, int sessionID) throws InvalidSession{
+		// check if the session is still valid
 		if (!sessions.contains(sessionID)){
 			throw new InvalidSession("Session has timed out");
 		}
@@ -140,12 +161,30 @@ public class Bank implements BankInterface {
 		
 	}
 	
+    /*********
+     * returns the index of the requested account within the accounts array, based on the given accountnumber
+     *********/
 	private int getAccountIndex(int accountnum){
 		
 		int index = 0;
 		
 		for (int i=0; i<accounts.size() ; i++){
 			if (accounts.get(i).accountNumber == accountnum){
+				index = i;
+			}
+		}
+		return index;
+	}
+	
+    /*********
+     * returns the index of the requested account within the accounts array, based on the given username
+     *********/
+	private int getAccountIndex(String uname){
+		
+		int index = 0;
+		
+		for (int i=0; i<accounts.size() ; i++){
+			if (accounts.get(i).username.equals(uname)){
 				index = i;
 			}
 		}

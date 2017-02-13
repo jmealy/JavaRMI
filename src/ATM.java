@@ -26,15 +26,25 @@ public class ATM {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Welcom to ATM");
       
-            long sessionID = -1;
+            int sessionID = -1;
+            int accountNumber = 0;
+            int[] loginDetails = new int[2];
             while(!login){
+            	
+            	// prompt user to enter login information
             	System.out.print("Plese enter Username: ");
             	String username =  scanner.nextLine();
             	System.out.print("Plese enter password: ");
             	String pass = scanner.nextLine();
             	
-            	sessionID = stub.login(username, pass);
+            	//login method returns sessionID and account number in an integer array (loginDetails)
+            	loginDetails =  stub.login(username, pass);
             	
+            	//get ID values from the returned array
+            	sessionID = loginDetails[0];	
+            	accountNumber = loginDetails[1]; 
+            	
+            	// check if login was successful
             	if(sessionID == -1){
             		System.out.print("Invalid login");
             	}
@@ -57,14 +67,14 @@ public class ATM {
             	switch(line){ 
             	
             	case"inquiry":
-            		System.out.println("Current balence: "+stub.inquiry(1, 0));
+            		System.out.println("Current balence: "+stub.inquiry(accountNumber, sessionID));
             		line = null;
             		break;
             	
             	case"withdraw":
             		System.out.print("Plese enter an amount to withdraw: ");
             		int am = scanner.nextInt();
-            		boolean check = stub.withdraw(1, am, sessionID);
+            		boolean check = stub.withdraw(accountNumber, am, sessionID);
             		
             		if(!check){
             		System.out.println("Withdrew: "+am);
@@ -78,7 +88,7 @@ public class ATM {
             	case"deposit":
             		System.out.print("Plese enter an amount to deposit: ");
             		int amt = scanner.nextInt();
-            		stub.deposit(1, amt, sessionID);
+            		stub.deposit(accountNumber, amt, sessionID);
             		System.out.println("Deposited: "+amt);
             		line = null;
             		break;
@@ -115,10 +125,10 @@ public class ATM {
             		}
             		
             		if(!date.isEmpty()){
-                    Statement = stub.getStatement(1, fDate, tDate, sessionID);
+                    Statement = stub.getStatement(accountNumber, fDate, tDate, sessionID);
             		}
             		else{
-            			Statement = stub.getStatement(1,null,null, sessionID);
+            			Statement = stub.getStatement(accountNumber,null,null, sessionID);
             		}
                     if(!Statement.isEmpty()){
                     	for(int i = 0 ; i < Statement.size(); i++){
