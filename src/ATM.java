@@ -20,12 +20,13 @@ public class ATM {
             Registry registry = LocateRegistry.getRegistry(host);
             BankInterface stub = (BankInterface) registry.lookup("Hello");
                    
-
+            //Variables for use in CLI interface
             boolean CLIActive = true;
             boolean login = false;
             Scanner scanner = new Scanner(System.in);
             System.out.println("Welcom to ATM");
-      
+            
+            //Login section
             int sessionID = -1;
             int accountNumber = 0;
             int[] loginDetails = new int[2];
@@ -55,22 +56,22 @@ public class ATM {
             	}
             }
             
-            
+            //Cli interface case statement
             while(CLIActive){
-            	
-            	
-            	//Where login would go 
+            	//This will run until the user logs out
             	String line = "";
             	System.out.print("Plese enter action: ");
             	line = scanner.nextLine();
             	line.toLowerCase();
-            	switch(line){ 
             	
+            	//Statement to read all of the commands
+            	switch(line){ 
+            	//Retrieves the users current balence
             	case"inquiry":
             		System.out.println("Current balence: "+stub.inquiry(accountNumber, sessionID));
             		line = null;
             		break;
-            	
+            	//Command to withdraw money from the account =
             	case"withdraw":
             		System.out.print("Plese enter an amount to withdraw: ");
             		int am = scanner.nextInt();
@@ -84,7 +85,7 @@ public class ATM {
             		}
             		line = null;
             		break;
-            	
+            	//Deposits a specified amount into the account
             	case"deposit":
             		System.out.print("Plese enter an amount to deposit: ");
             		int amt = scanner.nextInt();
@@ -92,11 +93,11 @@ public class ATM {
             		System.out.println("Deposited: "+amt);
             		line = null;
             		break;
-            		
+            	//Gets the statement for a given time frame and prints them out
             	case"statement":
             		ArrayList<Transaction> Statement = new ArrayList<Transaction>();
             		DateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
-            		System.out.println("Plese enter date in dd/MMM/yyy format . Leave dates blank to get all transactions");
+            		System.out.println("Plese enter date in dd/MMM/yyyy format e.g(05/jan/2017) . Leave dates blank to get all transactions");
             		System.out.println("From Date: ");
             		Date tDate = null;
             		Date fDate = null;
@@ -140,13 +141,15 @@ public class ATM {
                     }
                     line = null;
             		break;
-            
+            		
+            	//Logs the user out of the CLI and closes the ATM
             	case "logout":
             		System.out.println("Goodbye");
             		CLIActive = false;
             		scanner.close();
             		break;
-       
+            		
+            	// Shows all commands
             	case"help":
             		System.out.println("Available commands:");
             		System.out.println("deposit- To deposit money into your account");
