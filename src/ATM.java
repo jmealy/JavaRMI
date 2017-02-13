@@ -56,7 +56,7 @@ public class ATM {
             	}
             }
             
-            //Cli interface case statement
+            //CLI interface case statement
             while(CLIActive){
             	//This will run until the user logs out
             	String line = "";
@@ -66,7 +66,7 @@ public class ATM {
             	
             	//Statement to read all of the commands
             	switch(line){ 
-            	//Retrieves the users current balence
+            	//Retrieves the users current balance
             	case"inquiry":
             		System.out.println("Current balence: "+stub.inquiry(accountNumber, sessionID));
             		line = null;
